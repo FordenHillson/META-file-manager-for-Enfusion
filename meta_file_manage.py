@@ -40,7 +40,8 @@ def delete_export_scene_hierarchy():
         # Check if ExportSceneHierarchy 1 exists
         if "ExportSceneHierarchy 1" in content:
             # Delete ExportSceneHierarchy 1
-            content = re.sub(r'ExportSceneHierarchy 1\n', '', content)
+            content = re.sub(r'ExportSceneHierarchy 1\n?', '', content)
+            status_label.config(text="Delete successfully!", foreground="black", background="orange",font=12)
 
         with open(file, 'w') as f:
             f.write(content)
@@ -55,6 +56,7 @@ def delete_generate_bsp():
         if "GenerateBSP 1" in content:
             # Delete GenerateBSP 1
             content = re.sub(r'GenerateBSP 1\n?', '', content)
+            status_label.config(text="Delete successfully!", foreground="black", background="orange",font=12)
 
         with open(file, 'w') as f:
             f.write(content)
@@ -70,6 +72,7 @@ def delete_all_options():
 
         # Delete GenerateBSP 1
         content = re.sub(r'GenerateBSP 1\n?', '', content)
+        status_label.config(text="Delete successfully!", foreground="black", background="orange",font=12)
 
         with open(file, 'w') as f:
             f.write(content)
@@ -83,16 +86,16 @@ def select_files():
         for file in selected_files:
             filename = os.path.basename(file)  # Extract filename from full path
             file_listbox.insert(tk.END, filename)
-        status_label.config(text="Files selected successfully!", foreground="green")
+        status_label.config(text="Files selected successfully!", foreground="white", background="green",font=12)
     else:
-        status_label.config(text="No files selected.", foreground="red")
+        status_label.config(text="No files selected.", foreground="white", background="red",font=12)
 
 def process_selected():
     if selected_files:
         process_files()
-        status_label.config(text="Files processed successfully!", foreground="green")
+        status_label.config(text="Enable successfully!", foreground="white", background="green",font=12)
     else:
-        status_label.config(text="No files selected.", foreground="red")
+        status_label.config(text="No files selected.", foreground="white", background="red",font=12)
 
 # Create GUI
 root = tk.Tk()
@@ -107,44 +110,49 @@ photo = tk.PhotoImage(file = 'icon.png')
 root.wm_iconphoto(False, photo)
 
 # Frame for file selection
-file_frame = ttk.Frame(root)
-file_frame.grid(row=1, column=0, padx=20, pady=20)
+file_frame = ttk.LabelFrame(root, text="Process")
+file_frame.grid(row=0, column=0, padx=10, sticky="nsew", rowspan=1)
+file_frame.columnconfigure(index=0, weight=1,)
 
 select_button = ttk.Button(file_frame, text="Select META Files", command=select_files)
-select_button.grid(row=1, column=0, padx=2, pady=10)
+select_button.grid(row=0, column=0, padx=5, pady=(0, 10), sticky="ew")
 
 process_button = ttk.Button(file_frame, text="Process Selected", command=process_selected)
-process_button.grid(row=1, column=1, padx=2, pady=10)
+process_button.grid(row=1, column=0, padx=5, pady=(0, 10), sticky="ew")
 
 generate_bsp_var = tk.BooleanVar(value=False)
 
 generate_bsp_checkbox = ttk.Checkbutton(file_frame, text="Generate BSP", variable=generate_bsp_var)
-generate_bsp_checkbox.grid(row=0, column=0, padx=10, pady=10)
+generate_bsp_checkbox.grid(row=2, column=0, padx=5, pady=(0, 0), sticky="ew")
 
-status_label = ttk.Label(root, text="", foreground="green")
-status_label.grid(row=3, column=0, padx=20, pady=10, sticky="ew")
+# Frame for delete select
+delete_frame = ttk.LabelFrame(root, text="Delete", padding=(0, 0, 0, 10))
+delete_frame.grid(row=1, column=0, padx=10, pady=(0, 10), sticky="nsew", rowspan=1)
+delete_frame.columnconfigure(index=0, weight=10)
 
+delete_export_scene_hierarchy_button = ttk.Button(delete_frame, text="Delete Export Scene Hierarchy", command=delete_export_scene_hierarchy)
+delete_export_scene_hierarchy_button.grid(row=5, column=0, padx=10, pady=(30, 10), sticky="nsew", rowspan=2)
 
-delete_export_scene_hierarchy_button = ttk.Button(file_frame, text="Delete Export Scene Hierarchy", command=delete_export_scene_hierarchy)
-delete_export_scene_hierarchy_button.grid(row=3, column=0, padx=10, pady=10)
+delete_generate_bsp_button = ttk.Button(delete_frame, text="Delete Generate BSP", command=delete_generate_bsp)
+delete_generate_bsp_button.grid(row=6, column=0, padx=10, pady=(30, 10), sticky="nsew", rowspan=3)
 
-delete_generate_bsp_button = ttk.Button(file_frame, text="Delete Generate BSP", command=delete_generate_bsp)
-delete_generate_bsp_button.grid(row=3, column=1, padx=10, pady=10)
-
-delete_all_options_button = ttk.Button(file_frame, text="Delete All Options", command=delete_all_options)
-delete_all_options_button.grid(row=3, column=3, padx=10, pady=10)
+delete_all_options_button = ttk.Button(delete_frame, text="Delete All Options", command=delete_all_options)
+delete_all_options_button.grid(row=7, column=0, padx=10, pady=(30, 10), sticky="nsew", rowspan=4)
 
 # Frame for file list
 list_frame = ttk.Frame(root)
-list_frame.grid(row=0, column=0, padx=20, pady=10, sticky="nsew")
+list_frame.grid(row=0, column=1, padx=20, pady=10, sticky="nsew")
 
-file_listbox = tk.Listbox(list_frame, selectmode=tk.MULTIPLE, width=50, height=12)
+file_listbox = tk.Listbox(list_frame, selectmode=tk.MULTIPLE, width=52, height=12)
 file_listbox.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
 
 scrollbar = ttk.Scrollbar(list_frame, orient=tk.VERTICAL, command=file_listbox.yview)
 scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
 
 file_listbox.config(yscrollcommand=scrollbar.set)
+
+status_label = ttk.Label(root, text="status", foreground="green")
+status_label.grid(row=1, column=1, padx=10, pady=10)
 
 # Configure grid rows and columns to expand
 root.columnconfigure(0, weight=1)
