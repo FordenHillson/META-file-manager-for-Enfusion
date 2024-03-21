@@ -161,7 +161,7 @@ delete_all_options_button.grid(row=7, column=0, padx=10, pady=(30, 20), sticky="
 list_frame = ttk.Frame(root)
 list_frame.grid(row=0, column=1, padx=20, pady=20, sticky="nsew", rowspan=2)
 
-file_listbox = tk.Listbox(list_frame, selectmode=tk.MULTIPLE, width=64, height=18)
+file_listbox = tk.Listbox(list_frame, selectmode=tk.BROWSE, width=64, height=18)
 file_listbox.grid(row=0, column=0, sticky="nsew")
 
 status_label = ttk.Label(list_frame, text="", foreground="green", anchor='center', background="gray28")
