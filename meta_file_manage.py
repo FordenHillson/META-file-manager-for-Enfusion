@@ -122,16 +122,17 @@ photo = tk.PhotoImage(file = 'icon.png')
 root.wm_iconphoto(False, photo)
 
 # Frame for file selection
-file_frame = ttk.LabelFrame(root, text="Process")
+file_frame = ttk.LabelFrame(root, text="Process",)
 file_frame.grid(row=0, column=0, padx=10, pady=10, sticky="new", rowspan=1)
 file_frame.columnconfigure(index=0, weight=1)
 file_frame.rowconfigure(index=0, weight=1)
 
+
 select_button = ttk.Button(file_frame, text="Select META Files", command=select_files)
-select_button.grid(row=0, column=0, padx=2, pady=(0, 10), sticky="ew")
+select_button.grid(row=0, column=0, padx=10, pady=(0, 10), sticky="ew")
 
 process_button = ttk.Button(file_frame, text="Process Selected", command=process_selected)
-process_button.grid(row=1, column=0, padx=2, pady=(0, 10), sticky="ew")
+process_button.grid(row=1, column=0, padx=10, pady=(0, 10), sticky="ew")
 
 export_scene_hierarchy_enabled = tk.BooleanVar(value=False)
 esh_checkbox = ttk.Checkbutton(file_frame, text="Enable Export Scene Hierarchy", variable=export_scene_hierarchy_enabled)
@@ -148,23 +149,23 @@ delete_frame.columnconfigure(index=0, weight=1)
 delete_frame.rowconfigure(index=0, weight=1)
 
 delete_export_scene_hierarchy_button = ttk.Button(delete_frame, text="Delete Export Scene Hierarchy", command=delete_export_scene_hierarchy)
-delete_export_scene_hierarchy_button.grid(row=5, column=0, padx=10, pady=(30, 10), sticky="nsew", rowspan=2)
+delete_export_scene_hierarchy_button.grid(row=5, column=0, padx=10, pady=(30, 20), sticky="nsew", rowspan=2)
 
 delete_generate_bsp_button = ttk.Button(delete_frame, text="Delete Generate BSP", command=delete_generate_bsp)
-delete_generate_bsp_button.grid(row=6, column=0, padx=10, pady=(30, 10), sticky="nsew", rowspan=3)
+delete_generate_bsp_button.grid(row=6, column=0, padx=10, pady=(30, 20), sticky="nsew", rowspan=3)
 
 delete_all_options_button = ttk.Button(delete_frame, text="Delete All Options", command=delete_all_options)
-delete_all_options_button.grid(row=7, column=0, padx=10, pady=(30, 10), sticky="nsew", rowspan=4)
+delete_all_options_button.grid(row=7, column=0, padx=10, pady=(30, 20), sticky="nsew", rowspan=4)
 
 # Frame for file list and status label
 list_frame = ttk.Frame(root)
 list_frame.grid(row=0, column=1, padx=20, pady=20, sticky="nsew", rowspan=2)
 
-file_listbox = tk.Listbox(list_frame, selectmode=tk.MULTIPLE, width=64, height=16)
+file_listbox = tk.Listbox(list_frame, selectmode=tk.MULTIPLE, width=64, height=18)
 file_listbox.grid(row=0, column=0, sticky="nsew")
 
-status_label = ttk.Label(list_frame, text="status", foreground="green", anchor='center')
-status_label.grid(row=1, column=0, pady=10, sticky="nsew")
+status_label = ttk.Label(list_frame, text="", foreground="green", anchor='center', background="gray28")
+status_label.grid(row=1, column=0, pady=30, sticky="nsew")
 
 scrollbar = ttk.Scrollbar(list_frame, orient=tk.VERTICAL, command=file_listbox.yview)
 scrollbar.grid(row=0, column=1, sticky="ns")
@@ -178,3 +179,4 @@ root.rowconfigure(0, weight=1)
 root.rowconfigure(1, weight=1)
 
 root.mainloop()
+
