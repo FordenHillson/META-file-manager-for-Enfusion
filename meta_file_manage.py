@@ -92,9 +92,6 @@ def reset_selection():
     status_label.config(text="Selection reset successfully!", foreground="black", background="orange", font=12)
 
 def update_software():
-    import os
-
-def update_software():
     try:
         # Assuming the repository is in the same directory as the script
         script_dir = os.path.dirname(os.path.abspath(__file__))
