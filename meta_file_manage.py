@@ -92,8 +92,17 @@ def reset_selection():
     status_label.config(text="Selection reset successfully!", foreground="black", background="orange", font=12)
 
 def update_software():
+    import os
+
+def update_software():
     try:
-        repo_path = "D:\perso\github\META-file-manager-for-Enfusion"  # Replace this with the path to your local repository
+        # Assuming the repository is in the same directory as the script
+        script_dir = os.path.dirname(os.path.abspath(__file__))
+        repo_path = os.path.join(script_dir)
+        
+        # Alternatively, if your repository is located in a parent directory, you can use:
+        # repo_path = os.path.abspath(os.path.join(script_dir, "..", "META-file-manager-for-Enfusion"))
+        
         repo = git.Repo(repo_path)
         origin = repo.remote(name='origin')
         origin.pull()
@@ -108,7 +117,7 @@ root = tk.Tk()
 root.title("META File Manager for enfuison")
 
 # Set window size
-root.geometry("750x420")  # Width x Height
+root.geometry("750x460")  # Width x Height
 
 # Lock window size
 root.resizable(False, False)  # Lock both x and y directions
@@ -143,7 +152,7 @@ generate_bsp_checkbox.grid(row=3, column=0, padx=5, pady=(2, 0), sticky="ew")
 
 # Button for software update
 update_button = ttk.Button(file_frame, text="Update tool", command=update_software)
-update_button.grid(row=4, column=0, padx=5, pady=10, sticky="ew")
+update_button.grid(row=4, column=0, padx=10, pady=10, sticky="ew")
 
 # Frame for delete select
 delete_frame = ttk.LabelFrame(root, text="Delete", padding=(0, 0, 0, 10))
@@ -168,8 +177,8 @@ file_listbox.grid(row=0, column=0, sticky="nsew")
 reset_button = ttk.Button(list_frame, text="Reset Selection", command=reset_selection)
 reset_button.grid(row=1, column=0, pady=6, sticky="nsew")
 
-status_label = ttk.Label(list_frame, text="", foreground="green", anchor='center', background="gray28")
-status_label.grid(row=4, column=0, pady=6, sticky="nsew")
+status_label = ttk.Label(list_frame, text="", foreground="green", anchor='center', background="gray28", wraplength=400)
+status_label.grid(row=4, column=0, pady=6, sticky="nsew", rowspan=2)
 
 scrollbar = ttk.Scrollbar(list_frame, orient=tk.VERTICAL, command=file_listbox.yview)
 scrollbar.grid(row=0, column=1, sticky="ns")
