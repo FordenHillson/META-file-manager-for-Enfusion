@@ -98,7 +98,7 @@ def update_software():
         repo_path = os.path.join(script_dir)
         
         # Alternatively, if your repository is located in a parent directory, you can use:
-        # repo_path = os.path.abspath(os.path.join(script_dir, "..", "META-file-manager-for-Enfusion"))
+        # repo_path = os.path.abspath(os.path.join(script_dir)
         
         repo = git.Repo(repo_path)
         origin = repo.remote(name='origin')
