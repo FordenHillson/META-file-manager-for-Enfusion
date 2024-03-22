@@ -91,11 +91,12 @@ def reset_selection():
     file_listbox.delete(0, tk.END)
     status_label.config(text="Selection reset successfully!", foreground="black", background="orange", font=12)
 
+import subprocess
+
 def update_software():
     try:
-        status_label.config(text="Updating tool from git...", foreground="black", background="orange", font=12)
-        progress_bar["value"] = 0  # Set progress bar to 0 initially
-        root.update()  # Update the GUI to reflect the new status message and progress
+        status_label.config(text="Updating software...", foreground="black", background="orange", font=12)
+        root.update()  # Update the GUI to reflect the new status message
         
         # Assuming the repository is in the same directory as the script
         script_dir = os.path.dirname(os.path.abspath(__file__))
@@ -104,23 +105,26 @@ def update_software():
         # Alternatively, if your repository is located in a parent directory, you can use:
         # repo_path = os.path.abspath(os.path.join(script_dir)
         
-        repo = git.Repo(repo_path)
-        origin = repo.remote(name='origin')
+        # Run git pull command and capture output
+        process = subprocess.Popen(['git', 'pull'], cwd=repo_path, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        output, error = process.communicate()
         
-        # Fetch from remote with progress callback
-        def progress_callback(op_code, cur_count, max_count=None, message=''):
-            progress_percent = (cur_count / max_count) * 100
-            progress_bar["value"] = progress_percent
-            root.update_idletasks()  # Update the GUI to reflect the progress change
+        if process.returncode == 0:
+            status_label.config(text="Software updated successfully!", foreground="black", background="orange", font=12)
+        else:
+            error_message = f"Error updating software: {error.decode('utf-8')}"
+            status_label.config(text=error_message, foreground="red", background="orange", font=12)
+            print(error_message)  # Print the error for debugging purposes
         
-        for fetch_info in origin.pull(progress=progress_callback):
-            pass  # This loop is just for the fetch_info, we're interested in the progress_callback
+        # Display output in status label
+        output_message = output.decode('utf-8')
+        status_label.config(text=output_message, foreground="black", background="orange", font=12)
         
-        status_label.config(text="tool updated successfully!", foreground="black", background="orange", font=12)
     except Exception as e:
         error_message = f"Error updating software: {str(e)}"
         status_label.config(text=error_message, foreground="red", background="orange", font=12)
         print(error_message)  # Print the error for debugging purposes
+
 
 
 
