@@ -92,7 +92,7 @@ def reset_selection():
     status_label.config(text="Selection reset successfully!", foreground="black", background="orange", font=12)
 
 import subprocess
-
+'''
 def update_software():
     try:
         status_label.config(text="Updating software...", foreground="black", background="orange", font=12)
@@ -124,17 +124,17 @@ def update_software():
         error_message = f"Error updating software: {str(e)}"
         status_label.config(text=error_message, foreground="red", background="orange", font=12)
         print(error_message)  # Print the error for debugging purposes
-
+'''
 
 
 
 
 # Create GUI
 root = tk.Tk()
-root.title("META File Manager for enfuison")
+root.title("META File Manager for enfuison ver 0.1")
 
 # Set window size
-root.geometry("750x460")  # Width x Height
+root.geometry("750x420")  # Width x Height
 
 # Lock window size
 root.resizable(False, False)  # Lock both x and y directions
@@ -144,8 +144,7 @@ root.tk.call('source', 'forest-dark.tcl')
 # Set the theme with the theme_use method
 ttk.Style().theme_use('forest-dark')
 
-photo = tk.PhotoImage(file='icon.png')
-root.wm_iconphoto(False, photo)
+root.iconbitmap("favicon.ico")
 
 selected_files = []
 
@@ -167,9 +166,11 @@ generate_bsp_var = tk.BooleanVar(value=False)
 generate_bsp_checkbox = ttk.Checkbutton(file_frame, text="Generate BSP", variable=generate_bsp_var)
 generate_bsp_checkbox.grid(row=3, column=0, padx=5, pady=(2, 0), sticky="ew")
 
+'''
 # Button for software update
 update_button = ttk.Button(file_frame, text="Update tool", command=update_software)
 update_button.grid(row=4, column=0, padx=10, pady=10, sticky="ew")
+'''
 
 # Frame for delete select
 delete_frame = ttk.LabelFrame(root, text="Delete", padding=(0, 0, 0, 10))
@@ -196,9 +197,6 @@ reset_button.grid(row=1, column=0, pady=6, sticky="nsew")
 
 status_label = ttk.Label(list_frame, text="", foreground="green", anchor='center', background="gray28", wraplength=400)
 status_label.grid(row=4, column=0, pady=6, sticky="nsew", rowspan=2)
-
-progress_bar = ttk.Progressbar(list_frame, orient=tk.HORIZONTAL, length=200, mode='determinate')
-progress_bar.grid(row=2, column=0, pady=6, sticky="nsew")
 
 scrollbar = ttk.Scrollbar(list_frame, orient=tk.VERTICAL, command=file_listbox.yview)
 scrollbar.grid(row=0, column=1, sticky="ns")
