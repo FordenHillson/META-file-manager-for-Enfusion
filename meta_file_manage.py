@@ -93,6 +93,10 @@ def reset_selection():
 
 def update_software():
     try:
+        status_label.config(text="Updating tool from git...", foreground="black", background="orange", font=12)
+        progress_bar["value"] = 0  # Set progress bar to 0 initially
+        root.update()  # Update the GUI to reflect the new status message and progress
+        
         # Assuming the repository is in the same directory as the script
         script_dir = os.path.dirname(os.path.abspath(__file__))
         repo_path = os.path.join(script_dir)
@@ -102,12 +106,24 @@ def update_software():
         
         repo = git.Repo(repo_path)
         origin = repo.remote(name='origin')
-        origin.pull()
-        status_label.config(text="Software updated successfully!", foreground="black", background="orange", font=12)
+        
+        # Fetch from remote with progress callback
+        def progress_callback(op_code, cur_count, max_count=None, message=''):
+            progress_percent = (cur_count / max_count) * 100
+            progress_bar["value"] = progress_percent
+            root.update_idletasks()  # Update the GUI to reflect the progress change
+        
+        for fetch_info in origin.pull(progress=progress_callback):
+            pass  # This loop is just for the fetch_info, we're interested in the progress_callback
+        
+        status_label.config(text="tool updated successfully!", foreground="black", background="orange", font=12)
     except Exception as e:
         error_message = f"Error updating software: {str(e)}"
         status_label.config(text=error_message, foreground="red", background="orange", font=12)
         print(error_message)  # Print the error for debugging purposes
+
+
+
 
 # Create GUI
 root = tk.Tk()
@@ -176,6 +192,9 @@ reset_button.grid(row=1, column=0, pady=6, sticky="nsew")
 
 status_label = ttk.Label(list_frame, text="", foreground="green", anchor='center', background="gray28", wraplength=400)
 status_label.grid(row=4, column=0, pady=6, sticky="nsew", rowspan=2)
+
+progress_bar = ttk.Progressbar(list_frame, orient=tk.HORIZONTAL, length=200, mode='determinate')
+progress_bar.grid(row=2, column=0, pady=6, sticky="nsew")
 
 scrollbar = ttk.Scrollbar(list_frame, orient=tk.VERTICAL, command=file_listbox.yview)
 scrollbar.grid(row=0, column=1, sticky="ns")
