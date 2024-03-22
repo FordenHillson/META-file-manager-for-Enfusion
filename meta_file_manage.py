@@ -103,12 +103,18 @@ def process_selected():
     else:
         status_label.config(text="No files selected.", foreground="white", background="red",font=12)
 
+def reset_selection():
+    global selected_files
+    selected_files = []
+    file_listbox.delete(0, tk.END)
+    status_label.config(text="Selection reset successfully!", foreground="black", background="orange",font=12)
+
 # Create GUI
 root = tk.Tk()
 root.title("META File Manager for enfuison")
 
 # Set window size
-root.geometry("750x400")  # Width x Height
+root.geometry("750x420")  # Width x Height
 
 # Lock window size
 root.resizable(False, False)  # Lock both x and y directions
@@ -157,6 +163,7 @@ delete_generate_bsp_button.grid(row=6, column=0, padx=10, pady=(30, 20), sticky=
 delete_all_options_button = ttk.Button(delete_frame, text="Delete All Options", command=delete_all_options)
 delete_all_options_button.grid(row=7, column=0, padx=10, pady=(30, 20), sticky="nsew", rowspan=4)
 
+
 # Frame for file list and status label
 list_frame = ttk.Frame(root)
 list_frame.grid(row=0, column=1, padx=20, pady=20, sticky="nsew", rowspan=2)
@@ -164,8 +171,11 @@ list_frame.grid(row=0, column=1, padx=20, pady=20, sticky="nsew", rowspan=2)
 file_listbox = tk.Listbox(list_frame, selectmode=tk.BROWSE, width=64, height=18)
 file_listbox.grid(row=0, column=0, sticky="nsew")
 
+reset_button = ttk.Button(list_frame, text="Reset Selection", command=reset_selection)
+reset_button.grid(row=1, column=0, pady=6, sticky="nsew")
+
 status_label = ttk.Label(list_frame, text="", foreground="green", anchor='center', background="gray28")
-status_label.grid(row=1, column=0, pady=30, sticky="nsew")
+status_label.grid(row=4, column=0, pady=6, sticky="nsew")
 
 scrollbar = ttk.Scrollbar(list_frame, orient=tk.VERTICAL, command=file_listbox.yview)
 scrollbar.grid(row=0, column=1, sticky="ns")
