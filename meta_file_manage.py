@@ -2,12 +2,9 @@ import tkinter as tk
 from tkinter import ttk, filedialog
 import re
 import os
+import git
 
-selected_files = []
-
-
-def process_files():
-    global selected_files
+def process_files(selected_files):
     for file in selected_files:
         with open(file, 'r') as f:
             content = f.read()
@@ -28,86 +25,81 @@ def process_files():
             content = re.sub(r'Common TXOCommonClass "([^"]*)" : "([^"]*)" {', 
                              r'Common TXOCommonClass "\1" : "\2" {\n    GenerateBSP 1', content)           
         
+        with open(file, 'w') as f:
+            f.write(content)
+
+def delete_option(option):
+    for file in selected_files:
+        with open(file, 'r') as f:
+            content = f.read()
+
+        if option in content:
+            # Delete the option
+            content = re.sub(option + r'\s*1?', '', content)
+            status_label.config(text="Delete successfully!", foreground="black", background="orange", font=12)
 
         with open(file, 'w') as f:
             f.write(content)
 
 def delete_export_scene_hierarchy():
-    global selected_files
-    for file in selected_files:
-        with open(file, 'r') as f:
-            content = f.read()
-
-        # Check if ExportSceneHierarchy 1 exists
-        if "ExportSceneHierarchy 1" in content:
-            # Delete ExportSceneHierarchy 1
-            content = re.sub(r'ExportSceneHierarchy 1\n?', '', content)
-            status_label.config(text="Delete successfully!", foreground="black", background="orange",font=12)
-
-        with open(file, 'w') as f:
-            f.write(content)
+    delete_option("ExportSceneHierarchy")
 
 def delete_generate_bsp():
-    global selected_files
-    for file in selected_files:
-        with open(file, 'r') as f:
-            content = f.read()
-
-        # Check if GenerateBSP 1 exists
-        if "GenerateBSP 1" in content:
-            # Delete GenerateBSP 1
-            content = re.sub(r'GenerateBSP 1\n?', '', content)
-            status_label.config(text="Delete successfully!", foreground="black", background="orange",font=12)
-
-        with open(file, 'w') as f:
-            f.write(content)
+    delete_option("GenerateBSP")
 
 def delete_all_options():
-    global selected_files
     for file in selected_files:
         with open(file, 'r') as f:
             content = f.read()
 
         # Delete ExportSceneHierarchy 1
-        content = re.sub(r'ExportSceneHierarchy 1\n?', '', content)
+        content = re.sub(r'ExportSceneHierarchy 1\s*', '', content)
 
         # Delete GenerateBSP 1
-        content = re.sub(r'GenerateBSP 1\n?', '', content)
-        status_label.config(text="Delete successfully!", foreground="black", background="orange",font=12)
+        content = re.sub(r'GenerateBSP 1\s*', '', content)
+        status_label.config(text="Delete successfully!", foreground="black", background="orange", font=12)
 
         with open(file, 'w') as f:
             f.write(content)
 
 def select_files():
-    global selected_files
     files = filedialog.askopenfilenames(filetypes=[("META files", "*.meta")])
     if files:
-        selected_files = files
         file_listbox.delete(0, tk.END)
-        for file in selected_files:
+        for file in files:
+            selected_files.append(file)
             filename = os.path.basename(file)  # Extract filename from full path
             file_listbox.insert(tk.END, filename)
-        status_label.config(text="Files selected successfully!", foreground="white", background="green",font=12)
+        status_label.config(text="Files selected successfully!", foreground="white", background="green", font=12)
     else:
-        status_label.config(text="No files selected.", foreground="white", background="red",font=12)
+        status_label.config(text="No files selected.", foreground="white", background="red", font=12)
 
 def process_selected():
-    global selected_files
     if not export_scene_hierarchy_enabled.get() and not generate_bsp_var.get():
         status_label.config(text="Please pick one option.", foreground="white", background="red", font=12)
         return
 
     if selected_files:
-        process_files()
-        status_label.config(text="Enable successfully!", foreground="white", background="green",font=12)
+        process_files(selected_files)
+        status_label.config(text="Enable successfully!", foreground="white", background="green", font=12)
     else:
-        status_label.config(text="No files selected.", foreground="white", background="red",font=12)
+        status_label.config(text="No files selected.", foreground="white", background="red", font=12)
 
 def reset_selection():
     global selected_files
     selected_files = []
     file_listbox.delete(0, tk.END)
-    status_label.config(text="Selection reset successfully!", foreground="black", background="orange",font=12)
+    status_label.config(text="Selection reset successfully!", foreground="black", background="orange", font=12)
+
+def update_software():
+    try:
+        repo_path = "https://github.com/FordenHillson/META-file-manager-for-Enfusion"  # Replace this with the path to your local repository
+        repo = git.Repo(repo_path)
+        origin = repo.remote(name='origin')
+        origin.pull()
+        status_label.config(text="Software updated successfully!", foreground="black", background="orange", font=12)
+    except Exception as e:
+        status_label.config(text=f"Error updating software: {str(e)}", foreground="red", background="orange", font=12)
 
 # Create GUI
 root = tk.Tk()
@@ -124,15 +116,14 @@ root.tk.call('source', 'forest-dark.tcl')
 # Set the theme with the theme_use method
 ttk.Style().theme_use('forest-dark')
 
-photo = tk.PhotoImage(file = 'icon.png')
+photo = tk.PhotoImage(file='icon.png')
 root.wm_iconphoto(False, photo)
 
-# Frame for file selection
-file_frame = ttk.LabelFrame(root, text="Process",)
-file_frame.grid(row=0, column=0, padx=10, pady=10, sticky="new", rowspan=1)
-file_frame.columnconfigure(index=0, weight=1)
-file_frame.rowconfigure(index=0, weight=1)
+selected_files = []
 
+# Frame for file selection
+file_frame = ttk.LabelFrame(root, text="Process")
+file_frame.grid(row=0, column=0, padx=10, pady=10, sticky="new")
 
 select_button = ttk.Button(file_frame, text="Select META Files", command=select_files)
 select_button.grid(row=0, column=0, padx=10, pady=(0, 10), sticky="ew")
@@ -150,9 +141,7 @@ generate_bsp_checkbox.grid(row=2, column=0, padx=5, pady=(0, 0), sticky="ew")
 
 # Frame for delete select
 delete_frame = ttk.LabelFrame(root, text="Delete", padding=(0, 0, 0, 10))
-delete_frame.grid(row=1, column=0, padx=10, pady=(0, 10), sticky="new",rowspan=1)
-delete_frame.columnconfigure(index=0, weight=1)
-delete_frame.rowconfigure(index=0, weight=1)
+delete_frame.grid(row=1, column=0, padx=10, pady=(0, 10), sticky="new")
 
 delete_export_scene_hierarchy_button = ttk.Button(delete_frame, text="Delete Export Scene Hierarchy", command=delete_export_scene_hierarchy)
 delete_export_scene_hierarchy_button.grid(row=5, column=0, padx=10, pady=(30, 20), sticky="nsew", rowspan=2)
@@ -162,7 +151,6 @@ delete_generate_bsp_button.grid(row=6, column=0, padx=10, pady=(30, 20), sticky=
 
 delete_all_options_button = ttk.Button(delete_frame, text="Delete All Options", command=delete_all_options)
 delete_all_options_button.grid(row=7, column=0, padx=10, pady=(30, 20), sticky="nsew", rowspan=4)
-
 
 # Frame for file list and status label
 list_frame = ttk.Frame(root)
@@ -181,6 +169,10 @@ scrollbar = ttk.Scrollbar(list_frame, orient=tk.VERTICAL, command=file_listbox.y
 scrollbar.grid(row=0, column=1, sticky="ns")
 
 file_listbox.config(yscrollcommand=scrollbar.set)
+
+# Button for software update
+update_button = ttk.Button(root, text="Update Software", command=update_software)
+update_button.grid(row=0, column=1, padx=10, pady=10, sticky="ne")
 
 # Configure grid rows and columns to expand
 root.columnconfigure(0, weight=1)
