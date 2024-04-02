@@ -89,7 +89,7 @@ def reset_selection():
     messagebox.showinfo("Clear", "Selection cleared successfully!")
 
 root = tk.Tk()
-root.title("META File Manager for enfuison ver 0.1")
+root.title("META File Manager for enfuison ver 0.2")
 
 # Import the tcl file
 root.tk.call('source', 'forest-dark.tcl')
