@@ -2,26 +2,19 @@ import tkinter as tk
 from tkinter import ttk, filedialog
 import re
 import os
-import git
 
 def process_files(selected_files):
     for file in selected_files:
         with open(file, 'r') as f:
             content = f.read()
 
-        # Check if FBXResourceClass PC { exists
         if "FBXResourceClass PC {" not in content:
             continue
 
-        # Check if ExportSceneHierarchy is already present and if it is enabled
         if "ExportSceneHierarchy" not in content or not export_scene_hierarchy_enabled.get():
-            # If not present or disabled, add ExportSceneHierarchy 1 after FBXResourceClass PC {
             content = re.sub(r'FBXResourceClass PC {', r'FBXResourceClass PC {\n    ExportSceneHierarchy 1', content)
 
-        # Check if GenerateBSP 1 is already present
         if generate_bsp_var.get() and "GenerateBSP 1" not in content:
-            # If Generate BSP checkbox is checked and GenerateBSP 1 is not present,
-            # add GenerateBSP 1 after Common TXOCommonClass
             content = re.sub(r'Common TXOCommonClass "([^"]*)" : "([^"]*)" {', 
                              r'Common TXOCommonClass "\1" : "\2" {\n    GenerateBSP 1', content)           
         
@@ -34,7 +27,6 @@ def delete_option(option):
             content = f.read()
 
         if option in content:
-            # Delete the option
             content = re.sub(option + r'\s*1?', '', content)
             status_label.config(text="Delete successfully!", foreground="black", background="orange", font=12)
 
@@ -52,10 +44,7 @@ def delete_all_options():
         with open(file, 'r') as f:
             content = f.read()
 
-        # Delete ExportSceneHierarchy 1
         content = re.sub(r'ExportSceneHierarchy 1\s*', '', content)
-
-        # Delete GenerateBSP 1
         content = re.sub(r'GenerateBSP 1\s*', '', content)
         status_label.config(text="Delete successfully!", foreground="black", background="orange", font=12)
 
@@ -68,7 +57,7 @@ def select_files():
         file_listbox.delete(0, tk.END)
         for file in files:
             selected_files.append(file)
-            filename = os.path.basename(file)  # Extract filename from full path
+            filename = os.path.basename(file)
             file_listbox.insert(tk.END, filename)
         status_label.config(text="Files selected successfully!", foreground="white", background="green", font=12)
     else:
@@ -89,55 +78,10 @@ def reset_selection():
     global selected_files
     selected_files = []
     file_listbox.delete(0, tk.END)
-    status_label.config(text="Selection reset successfully!", foreground="black", background="orange", font=12)
+    status_label.config(text="Clear!", foreground="black", background="orange", font=12)
 
-import subprocess
-'''
-def update_software():
-    try:
-        status_label.config(text="Updating software...", foreground="black", background="orange", font=12)
-        root.update()  # Update the GUI to reflect the new status message
-        
-        # Assuming the repository is in the same directory as the script
-        script_dir = os.path.dirname(os.path.abspath(__file__))
-        repo_path = os.path.join(script_dir)
-        
-        # Alternatively, if your repository is located in a parent directory, you can use:
-        # repo_path = os.path.abspath(os.path.join(script_dir)
-        
-        # Run git pull command and capture output
-        process = subprocess.Popen(['git', 'pull'], cwd=repo_path, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-        output, error = process.communicate()
-        
-        if process.returncode == 0:
-            status_label.config(text="Software updated successfully!", foreground="black", background="orange", font=12)
-        else:
-            error_message = f"Error updating software: {error.decode('utf-8')}"
-            status_label.config(text=error_message, foreground="red", background="orange", font=12)
-            print(error_message)  # Print the error for debugging purposes
-        
-        # Display output in status label
-        output_message = output.decode('utf-8')
-        status_label.config(text=output_message, foreground="black", background="orange", font=12)
-        
-    except Exception as e:
-        error_message = f"Error updating software: {str(e)}"
-        status_label.config(text=error_message, foreground="red", background="orange", font=12)
-        print(error_message)  # Print the error for debugging purposes
-'''
-
-
-
-
-# Create GUI
 root = tk.Tk()
 root.title("META File Manager for enfuison ver 0.1")
-
-# Set window size
-root.geometry("750x420")  # Width x Height
-
-# Lock window size
-root.resizable(False, False)  # Lock both x and y directions
 
 # Import the tcl file
 root.tk.call('source', 'forest-dark.tcl')
@@ -148,7 +92,6 @@ root.iconbitmap("favicon.ico")
 
 selected_files = []
 
-# Frame for file selection
 file_frame = ttk.LabelFrame(root, text="Process")
 file_frame.grid(row=0, column=0, padx=10, pady=10, sticky="new")
 
@@ -166,13 +109,6 @@ generate_bsp_var = tk.BooleanVar(value=False)
 generate_bsp_checkbox = ttk.Checkbutton(file_frame, text="Generate BSP", variable=generate_bsp_var)
 generate_bsp_checkbox.grid(row=3, column=0, padx=5, pady=(2, 0), sticky="ew")
 
-'''
-# Button for software update
-update_button = ttk.Button(file_frame, text="Update tool", command=update_software)
-update_button.grid(row=4, column=0, padx=10, pady=10, sticky="ew")
-'''
-
-# Frame for delete select
 delete_frame = ttk.LabelFrame(root, text="Delete", padding=(0, 0, 0, 10))
 delete_frame.grid(row=1, column=0, padx=10, pady=(0, 10), sticky="new")
 
@@ -185,7 +121,6 @@ delete_generate_bsp_button.grid(row=6, column=0, padx=10, pady=(30, 20), sticky=
 delete_all_options_button = ttk.Button(delete_frame, text="Delete All Options", command=delete_all_options)
 delete_all_options_button.grid(row=7, column=0, padx=10, pady=(30, 20), sticky="nsew", rowspan=4)
 
-# Frame for file list and status label
 list_frame = ttk.Frame(root)
 list_frame.grid(row=0, column=1, padx=20, pady=20, sticky="nsew", rowspan=2)
 
@@ -203,11 +138,9 @@ scrollbar.grid(row=0, column=1, sticky="ns")
 
 file_listbox.config(yscrollcommand=scrollbar.set)
 
-# Configure grid rows and columns to expand
 root.columnconfigure(0, weight=1)
 root.columnconfigure(1, weight=1)
 root.rowconfigure(0, weight=1)
 root.rowconfigure(1, weight=1)
 
 root.mainloop()
-
