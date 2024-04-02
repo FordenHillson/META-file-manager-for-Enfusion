@@ -140,7 +140,7 @@ list_frame = ttk.LabelFrame(root,text="List", padding=(20, 10, 20, 10))
 list_frame.grid(row=0, column=1, padx=10, pady=(30, 10), sticky="nsew", rowspan=2)
 list_frame.columnconfigure(index=0, weight=1)
 
-file_listbox = tk.Listbox(list_frame, selectmode=tk.BROWSE, bd=2, width=64, height=24, font=tkFont.Font(family="Helvetica", size=14))
+file_listbox = tk.Listbox(list_frame, selectmode=tk.BROWSE, bd=2, width=64, height=34, font=tkFont.Font(family="Helvetica", size=14))
 file_listbox.grid(row=0, column=0, sticky="nsew")
 
 process_button = ttk.Button(list_frame, text="Process Selected", command=process_selected, style='my.TButton')
