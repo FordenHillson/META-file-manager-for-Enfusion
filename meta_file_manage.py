@@ -1,5 +1,5 @@
 import tkinter as tk
-from tkinter import ttk, filedialog
+from tkinter import ttk, filedialog, messagebox
 import tkinter.font as tkFont
 import re
 import os
@@ -30,6 +30,7 @@ def delete_option(option):
         if option in content:
             content = re.sub(option + r'\s*1?', '', content)
             status_label.config(text="Delete successfully!", foreground="black", background="orange", font=label_font_size)
+            messagebox.showinfo("Success", "Option deleted successfully!")
 
         with open(file, 'w') as f:
             f.write(content)
@@ -48,6 +49,7 @@ def delete_all_options():
         content = re.sub(r'ExportSceneHierarchy 1\s*', '', content)
         content = re.sub(r'GenerateBSP 1\s*', '', content)
         status_label.config(text="Delete successfully!", foreground="black", background="orange", font=label_font_size)
+        messagebox.showinfo("Success", "Options deleted successfully!") 
 
         with open(file, 'w') as f:
             f.write(content)
@@ -63,23 +65,28 @@ def select_files():
         status_label.config(text="Files selected successfully!", foreground="white", background="green", font=label_font_size)
     else:
         status_label.config(text="No files selected.", foreground="white", background="red", font=label_font_size)
+        messagebox.showerror("Error", "No files selected!")
 
 def process_selected():
     if not export_scene_hierarchy_enabled.get() and not generate_bsp_var.get():
         status_label.config(text="Please pick one option.", foreground="white", background="red", font=label_font_size)
+        messagebox.showerror("Error", "Please pick one option!")
         return
 
     if selected_files:
         process_files(selected_files)
         status_label.config(text="Enable successfully!", foreground="white", background="green", font=label_font_size)
+        messagebox.showinfo("Success", "Files processed successfully!")
     else:
         status_label.config(text="No files selected.", foreground="white", background="red", font=label_font_size)
+        messagebox.showerror("Error", "No files selected!")
 
 def reset_selection():
     global selected_files
     selected_files = []
     file_listbox.delete(0, tk.END)
     status_label.config(text="Clear!", foreground="black", background="orange", font=label_font_size)
+    messagebox.showinfo("Clear", "Selection cleared successfully!")
 
 root = tk.Tk()
 root.title("META File Manager for enfuison ver 0.1")
